@@ -6,17 +6,18 @@ export default {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          Gallery1: {
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: 'gallery',
             },
           },
-          TabTwo: {
-            screens: {
-              TabTwoScreen: 'two',
-            },
-          },
+          
         },
+      },
+      Upload: {
+        screens: {
+          TabTwoScreen: 'upload',
+        }
       },
       NotFound: '*',
     },

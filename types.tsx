@@ -1,10 +1,11 @@
 export type RootStackParamList = {
   Root: undefined;
+  Upload: undefined;
   NotFound: undefined;
 };
 
 export type BottomTabParamList = {
-  TabOne: undefined;
+  Gallery: undefined;
   TabTwo: undefined;
 };
 
@@ -12,6 +13,6 @@ export type TabOneParamList = {
   TabOneScreen: undefined;
 };
 
-export type TabTwoParamList = {
+export type UploadTabParamList = {
   TabTwoScreen: undefined;
 };
