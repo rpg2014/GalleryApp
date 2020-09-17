@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, useTheme } from 'react-native-paper';
+import { Appbar, useTheme, Title } from 'react-native-paper';
 import { StyleSheet, StatusBar, Dimensions } from 'react-native';
 import { useSafeAreaInsets, EdgeInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
@@ -9,7 +9,7 @@ const NAVBAR_HEIGHT = '7%'
 
 interface IHeaderBarProps {
     navbarHeight?: string | number;
-    
+    title: string,
 }
 // const height = Dimensions.get('window').height
 // console.log(NAVBAR_HEIGHT/height)
@@ -31,12 +31,12 @@ const MyComponent = (props: IHeaderBarProps) => {
     const styles = useStyles(insets, props.navbarHeight ? props.navbarHeight: NAVBAR_HEIGHT)
     // console.log('surface color: ' + theme.colors.surface)
     return (
-<SafeAreaView>
-        <StatusBar backgroundColor={theme.colors.surface} hidden={false} showHideTransition='slide' translucent={true}/>
-            <Appbar theme={theme} style={styles.bottom} >
+<SafeAreaView >
+        <StatusBar backgroundColor={theme.colors.surface} barStyle={theme.dark? "light-content": "dark-content"} hidden={false} showHideTransition='slide' translucent={true}/>
+            <Appbar style={{...styles.bottom,}} >
                 <Appbar.Action icon={isDrawerOpen ? 'arrow-collapse-left' :'menu'}  onPress={_goBack} />
-                <Appbar.Content title="Title" subtitle="Subtitle" />
-                <Appbar.Action icon="upload" onPress={_handleSearch} />
+                <Appbar.Content  title={props.title} subtitle="Subtitle" />
+                <Appbar.Action icon="upload"  onPress={_handleSearch} />
                 <Appbar.Action icon="dots-vertical" onPress={_handleMore} />
             </Appbar>
   </SafeAreaView>      
@@ -61,7 +61,7 @@ const useStyles = (insets:EdgeInsets, navbarHeight: string| number) => {
       },
     bottom: {
         width: '100%',
-        elevation: 4,
+        elevation:14,
         // height: NAVBAR_HEIGHT
         // paddingTop: insets.top,
         // height: 0

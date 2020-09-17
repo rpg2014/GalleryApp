@@ -1,22 +1,25 @@
 import * as Linking from 'expo-linking';
 
+// I have no idea whats going on here
 export default {
   prefixes: [Linking.makeUrl('/')],
   config: {
     screens: {
-      Root: {
+      Home: {
+        path: '/',
         screens: {
-          Gallery1: {
-            screens: {
-              TabOneScreen: 'gallery',
-            },
-          },
+          // Feed: {
+            // path: '',
+            // screens: {
+              TabOneScreen: 'feed/:id',
+            // },
+          // },
           
         },
       },
       Upload: {
         screens: {
-          TabTwoScreen: 'upload',
+          UploadScreen: 'upload',
         }
       },
       NotFound: '*',

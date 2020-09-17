@@ -7,12 +7,13 @@ import HeaderBar from '../screens/HeaderBar'
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import GalleryTabScreen from '../screens/GalleryTab/GalleryTab';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import UploadScreen from '../screens/TabTwoScreen';
 import {  TabOneParamList} from '../types';
 import { useTheme, Portal, FAB } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useWindowDimensions, Dimensions } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { StyleSheet } from 'react-native';
 
 export type BottomTabParamList = {
   Gallery: undefined;
@@ -32,36 +33,20 @@ export default function BottomTabNavigator() {
   return (
     <>
     <BottomTab.Navigator
-      initialRouteName="Upload"
+      initialRouteName={tabs[0]}
       drawerType={isLargeScreen ? 'slide' : 'back'}
       drawerStyle={isLargeScreen ? null : { width: '66%', elevation:0 }}
       edgeWidth={screenWidth  }
       >
-        
         {tabs.map(tab => BottomTabScreen(tab, GalleryTabNavigator))}
-    
-      {/* <BottomTab.Screen
-        name="Gallery"
-        component={TabOneNavigator}
-        // options={{
-        //   tabBarIcon: ({ color }) => <SafeAreaView><TabBarIcon name="ios-code" color={color} /></SafeAreaView>,
-        // }}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoNavigator}
-        // options={{
-        //   tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
-        // }}
-      /> */}
     </BottomTab.Navigator>
     <Portal>
     <FAB
-      icon="plus"
+      icon="upload"
       visible={isFocused}
       onPress={() => navigator.navigate("Upload")}
       style={{
-        
+        elevation:5,
         position: 'absolute',
         bottom: 100,
         right: '10%',
@@ -72,16 +57,17 @@ export default function BottomTabNavigator() {
   );
 }
 
-const BottomTabScreen =(name: string, component: any) => {
+const BottomTabScreen =(name: string, Component: any) => {
   return (
     <BottomTab.Screen
         key={name}
         name={name}
-        component={component}
         // options={{
         //   tabBarIcon: ({ color }) => <SafeAreaView><TabBarIcon name="ios-code" color={color} /></SafeAreaView>,
         // }}
-      />
+      >
+        {() =><Component name={name}/>}
+      </BottomTab.Screen>
   )
 }
 
@@ -93,16 +79,22 @@ function TabBarIcon(props: { name: string; color: string }) {
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+// const TabOneStack = createStackNavigator<TabOneParamList>();
 
-function GalleryTabNavigator() {
+function GalleryTabNavigator(props: {name: string, component?: any}) {
+  type TabOneParamList = {
+    [name: string]: undefined;
+  };
+
+  const TabOneStack = createStackNavigator<TabOneParamList>();
   return (
     <TabOneStack.Navigator>
       <TabOneStack.Screen
-        name="TabOneScreen"
+        name={props.name}
         component={GalleryTabScreen}
         options={{ headerShown: true,
-        header: () => <HeaderBar/>
+        header: () => <HeaderBar title={props.name}/>,
+        headerStyle: styles.bottom
       }}
       />
     </TabOneStack.Navigator>
@@ -110,3 +102,15 @@ function GalleryTabNavigator() {
 }
 
 
+const styles = StyleSheet.create({bottom: {
+  width: '100%',
+  elevation: 4,
+  // height: NAVBAR_HEIGHT
+  // paddingTop: insets.top,
+  // height: 0
+// position: 'absolute',
+// left: 0,
+// right: 0,
+// bottom: 0,
+},
+});

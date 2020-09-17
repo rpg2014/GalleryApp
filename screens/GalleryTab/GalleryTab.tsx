@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, FlatList, View, Image, Dimensions, Platform } from 'react-native';
-import { Text, useTheme, TouchableRipple, List, ActivityIndicator } from 'react-native-paper';
+import { Text, useTheme, TouchableRipple, List, ActivityIndicator, Surface } from 'react-native-paper';
 // import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderBar from '../HeaderBar'
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
 // import "../../any.jpg"
 
 
-const picsumImages = new Array(30).fill("https://some-random-api.ml/img/red_panda")
+const picsumImages = new Array(32).fill("https://some-random-api.ml/img/red_panda")
 const paddingBetweenImages = 5;
 const screenWidth = Dimensions.get("window").width;
 
@@ -15,6 +16,7 @@ const numColumns = 4;
 const screenWidthWithPadding = screenWidth-(paddingBetweenImages*numColumns+20)
 const columnWidth = screenWidthWithPadding /numColumns
 const tileSize = screenWidthWithPadding / numColumns;
+const heightModifier = 1.5;
 
 
 
@@ -27,12 +29,15 @@ export default function GalleryTabScreen() {
 
   console.log("Screenwidth: "+ screenWidth)
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, backgroundColor: theme.colors.backdrop}}>
+      {/* <HeaderBar/> */}
       <FlatList
-        style={{width: '100%'}}
+        style={{width: '100%',elevation: 0}}
+        // ListHeaderComponent={HeaderBar}
         data={images}
         progressViewOffset={10}
         // onMomentumScrollBegin
+        keyboardDismissMode='on-drag'
         renderItem={urlToGetImage => <ColumnItem  {...urlToGetImage} />}
         onEndReached={ (props: {distanceFromEnd: number}) => {
           console.log('endReached')
@@ -40,7 +45,7 @@ export default function GalleryTabScreen() {
           if(Platform.OS !=='web')//props.distanceFromEnd===0)
           {
             
-            let images2 = images.concat(new Array(20).fill("https://some-random-api.ml/img/dog"))
+            let images2 = images.concat(new Array(24).fill("https://some-random-api.ml/img/dog"))
             setImages(images2)
           }
         }}
@@ -59,7 +64,7 @@ const ColumnItem = React.memo((props: {item:any, index: number}) => {
   const [imageUrl, setImageUrl] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
   const [error , setError] = React.useState(false);
-  const [elevation, setElevation] = React.useState(2);
+  const [elevation, setElevation] = React.useState(1);
   const theme = useTheme()
   const handleResponse = (json) => {
     if(json.error) {
@@ -89,9 +94,9 @@ const ColumnItem = React.memo((props: {item:any, index: number}) => {
     //   .finally(() => setIsLoading(false));
   }, []);
   if(isLoading){
-    return(<View style={{...gridItemStyle,elevation: elevation}}>
-      <ActivityIndicator style={styles.image}size='large' />
-    </View>)
+    return(<Surface style={{...gridItemStyle, elevation: elevation , backgroundColor: theme.colors.backdrop}}>
+      <ActivityIndicator style={{...styles.loadingIndicator,elevation: elevation}}size='large' />
+    </Surface>)
   }
   if(error){
     <View style={gridItemStyle}>
@@ -100,15 +105,17 @@ const ColumnItem = React.memo((props: {item:any, index: number}) => {
   }
 // console.log("elevation: "+ elevation)
 return (
-  <View style={{...gridItemStyle, elevation: elevation}}>
+  <View style={{borderRadius:0,elevation:0, backgroundColor:theme.colors.backdrop}}>
     <TouchableRipple
       key={props.index}
-      style={{ elevation: 8}}
+      style={{borderRadius:3}}
       onPress={() => _onPress()}
+      
       rippleColor="rgba(255,255,255,0.5)">
-      <Image source={ imageUrl } style={{ width: columnWidth, height: columnWidth * 1.5, }}>
-
-      </Image>
+        {/* <Text style={styles.image}>hi</Text> */}
+        <Surface style={{...gridItemStyle, elevation:elevation}}>
+      <Image source={ imageUrl } style={{...styles.image}}/>
+      </Surface>
     </TouchableRipple>
   </View>
 )
@@ -120,7 +127,7 @@ return (
 const styles = StyleSheet.create({
   loadingIndicator: {
     width: columnWidth,
-    height: columnWidth *1.5,
+    height: columnWidth *heightModifier,
     justifyContent: "space-around"
   },
   greyBackground: {
@@ -128,9 +135,11 @@ const styles = StyleSheet.create({
   },
   image: {
     width: columnWidth,
-    height:columnWidth*1.5,
+    height:columnWidth*heightModifier,
     resizeMode: "cover",
-    borderRadius:5
+    
+    borderRadius: 3,
+    
   },
   gridItemContainer: {
     // height: tileSize,
@@ -139,6 +148,7 @@ const styles = StyleSheet.create({
     // aspectRatio: 1,
     // flex:1,
     // elevation: 2,
+    borderRadius:3,
     alignItems: "center",
     justifyContent: 'center',
   },
