@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, useTheme, Title } from 'react-native-paper';
+import { Appbar, useTheme, Title, Menu, Button, Divider } from 'react-native-paper';
 import { StyleSheet, StatusBar, Dimensions } from 'react-native';
 import { useSafeAreaInsets, EdgeInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
@@ -15,12 +15,17 @@ interface IHeaderBarProps {
 // console.log(NAVBAR_HEIGHT/height)
 const MyComponent = (props: IHeaderBarProps) => {
     const navigator = useNavigation();
+    const [menuVisible, setMenuVisible] = React.useState(false);
+
+  const openMenu = () => setMenuVisible(true);
+
+  const closeMenu = () => setMenuVisible(false);
     
     const _goBack = () => navigator.dispatch(DrawerActions.openDrawer());
 
     const _handleSearch = () => {
         navigator.navigate("Upload")
-        console.log("pressed upload")
+        // console.log("pressed upload")
     };
     
   
@@ -31,20 +36,32 @@ const MyComponent = (props: IHeaderBarProps) => {
     const styles = useStyles(insets, props.navbarHeight ? props.navbarHeight: NAVBAR_HEIGHT)
     // console.log('surface color: ' + theme.colors.surface)
     return (
-<SafeAreaView >
-        <StatusBar backgroundColor={theme.colors.surface} barStyle={theme.dark? "light-content": "dark-content"} hidden={false} showHideTransition='slide' translucent={true}/>
-            <Appbar style={{...styles.bottom,}} >
-                <Appbar.Action icon={isDrawerOpen ? 'arrow-collapse-left' :'menu'}  onPress={_goBack} />
-                <Appbar.Content  title={props.title} subtitle="Subtitle" />
-                <Appbar.Action icon="upload"  onPress={_handleSearch} />
-                <Appbar.Action icon="dots-vertical" onPress={_handleMore} />
+        <SafeAreaView >
+            <StatusBar backgroundColor={theme.colors.surface} barStyle={theme.dark ? "light-content" : "dark-content"} hidden={false} showHideTransition='slide' translucent={true} />
+            <Appbar style={{ ...styles.bottom, }} >
+                <Appbar.Action icon={isDrawerOpen ? 'arrow-collapse-left' : 'menu'} onPress={_goBack} />
+                <Appbar.Content title={props.title} subtitle="Subtitle" />
+                <Appbar.Action icon="upload" onPress={_handleSearch} />
+
+                <Menu
+                    // style={{backgroundColor: theme.colors.accent}}
+                    contentStyle={{backgroundColor: theme.colors.accent,}}
+                    visible={menuVisible}
+                    onDismiss={closeMenu}
+                    anchor={<Appbar.Action color={theme.colors.onBackground} icon="dots-vertical" onPress={openMenu} />}>
+                    <Menu.Item titleStyle={styles.titleStyle} onPress={() => { }} title="Item 1" />
+                    <Menu.Item titleStyle={styles.titleStyle}onPress={() => { }} title="Item 2" />
+                    <Divider style={{backgroundColor: theme.colors.onSurface}} />
+                    <Menu.Item titleStyle={styles.titleStyle}onPress={() => { navigator.navigate('Settings') }} title="Settings" />
+                </Menu>
             </Appbar>
-  </SafeAreaView>      
+        </SafeAreaView>      
     );
 }
 export default MyComponent
 
 const useStyles = (insets:EdgeInsets, navbarHeight: string| number) => {
+    const theme = useTheme()
     return StyleSheet.create({
     navbar: {
         position: 'absolute',
@@ -58,6 +75,9 @@ const useStyles = (insets:EdgeInsets, navbarHeight: string| number) => {
         height: navbarHeight,
         justifyContent: 'center',
         paddingTop: insets.top,
+      },
+      titleStyle: {
+          color: theme.colors.background
       },
     bottom: {
         width: '100%',

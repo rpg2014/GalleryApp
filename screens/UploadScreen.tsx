@@ -5,13 +5,19 @@ import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, TextInput, Searchbar, useTheme, Button, Surface, Divider, Snackbar } from 'react-native-paper';
 import {Picker} from '@react-native-community/picker';
 import { Ionicons } from '@expo/vector-icons';
+import Animated from 'react-native-reanimated';
 // import { Icon } from 'react-native-paper/lib/typescript/src/components/List/List';
 
 // import { View } from '../components/Themed';
 
-export default function UploadScreen() {
+export interface IUploadProps {
+  feedId: string
+}
+
+export default function UploadScreen(props: IUploadProps) {
+  
   const [urlToUpload, setUrlToUpload] = React.useState('');
-  const [feedToUploadTo, setFeedToUploadTo] = React.useState("Java");
+  const [feedToUploadTo, setFeedToUploadTo] = React.useState("js");
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
 
@@ -21,7 +27,7 @@ export default function UploadScreen() {
   const theme = useTheme();
   const onChangeURL = (query:string) => setUrlToUpload(query);
   return (
-    <View style={styles.container}>
+    <View  style={styles.container}>
       <Text style={styles.title}>Add a new thing to a feed</Text>
       
       <Divider style={styles.separator} />

@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/bigIcon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#00000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -26,6 +26,13 @@
     },
     "android": {
       "package": "com.parkergiven.galleryApp"
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      
+    },
+    "androidNavigationBar": {
+      "barStyle": "dark-content"
     }
   }
 }

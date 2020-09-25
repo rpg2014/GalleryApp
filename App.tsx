@@ -9,7 +9,7 @@ import { AppRegistry } from 'react-native';
 // Before rendering any navigation stack
 import { enableScreens } from 'react-native-screens';
 import { Theme } from 'react-native-paper/lib/typescript/src/types';
-import { DarkThemeCustom, DefaultThemeCustom, SlateTheme } from './constants/Themes';
+import Themes, { DarkThemeCustom, DefaultThemeCustom, SlateTheme } from './constants/Themes';
 
 
 
@@ -21,7 +21,7 @@ export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useTheme();
   const [darkMode, setDarkMode] = React.useState(false);
-  const defaultTheme = SlateTheme//darkMode ? DarkThemeCustom: DefaultThemeCustom
+  const defaultTheme = Themes.SlateTheme//darkMode ? DarkThemeCustom: DefaultThemeCustom
   // console.log(DefaultTheme)
 
 

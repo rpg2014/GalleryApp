@@ -4,6 +4,8 @@ import { Theme as NativeTheme } from "@react-navigation/native/lib/typescript/sr
 
 import { DefaultTheme, DarkTheme } from "react-native-paper";
 
+
+
 export const DarkThemeCustom: Theme & NativeTheme = {
     ...DarkTheme,
     dark: true,
@@ -54,6 +56,7 @@ export const DefaultThemeCustom: Theme & NativeTheme = {
         primary: '#6200ee',
         accent: '#03dac4',
         background: '#f6f6f6',
+        backdrop: "white",
         surface: "white",
         error: '#B00020',
         text: "black",
@@ -70,5 +73,7 @@ export const DefaultThemeCustom: Theme & NativeTheme = {
         scale: 1.0,
     },
 };
+
+export default  {DarkThemeCustom, SlateTheme, DefaultThemeCustom, DarkTheme, DefaultTheme}
 
 
