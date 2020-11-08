@@ -1,0 +1,52 @@
+
+type User @model 
+#@auth(rules:[{allow: owner}]) 
+@key(fields: ["id"]) {
+  id: ID!
+  name: String 
+  feeds: [Feed!] @connection(keyName:"byUser", fields: ["id"])
+  feedIDs: [String!]
+}
+
+type Feed @model
+ #@auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+ @key(name: "byUser", fields:["userID"], queryField: "feedsByUser")
+ {
+  id: ID!
+  name: String!
+  userID: ID!
+  user: User @connection(fields: ["userID"])
+  posts: [Post!] @connection(keyName: "byFeed", fields: ["id"])
+}
+
+type Post @model @versioned 
+#@auth(rules: [{ allow: owner, operations: [create] }])
+ @key(name: "byFeed", fields: ["feedID"], queryField: "postsByFeed") 
+ @key(name: "byUser", fields: ["userID"], queryField: "postsByUser") {
+  id: ID!
+  title: String
+  content: String!
+  postType: PostType
+  userID: ID!
+  user: User @connection(fields: ["userID"])
+  feedID: ID!
+  feed: Feed @connection(fields: ["feedID"])
+  comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
+}
+
+enum PostType {
+  IMAGE
+  WEBSITE
+  #Can add more when needed
+}
+
+type Comment @model 
+#@auth(rules: [{ allow: owner, operations: [create, delete, update] }]) 
+@key(name: "byPost", fields: ["postID", "content"]) @key(name: "byOwner", fields: ["userId"]) {
+  id: ID!
+  postID: ID!
+  userId: ID!
+  user: User @connection(fields: ["userId"])
+  post: Post @connection(fields: ["postID"])
+  content: String!
+}

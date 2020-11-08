@@ -1,31 +1,84 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-
+import * as Crypto from 'expo-crypto';
 import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, TextInput, Searchbar, useTheme, Button, Surface, Divider, Snackbar } from 'react-native-paper';
+import { Text, TextInput, Searchbar, useTheme, Button, Surface, Divider, Snackbar, ActivityIndicator } from 'react-native-paper';
 import {Picker} from '@react-native-community/picker';
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';
+import { Feed } from '../../models';
+import { useRoute } from '@react-navigation/native';
+import { useStore } from '../common/store';
+import { API, graphqlOperation } from 'aws-amplify';
+import * as mutations from '../../graphql/mutations';
+
 // import { Icon } from 'react-native-paper/lib/typescript/src/components/List/List';
 
 // import { View } from '../components/Themed';
 
 export interface IUploadProps {
-  feedId: string
+  feed?: Feed;
+  route: any
 }
 
 export default function UploadScreen(props: IUploadProps) {
-  
+  const route: any = useRoute();
+  const store = useStore();
+  const params: {feed:string} = route.params
   const [urlToUpload, setUrlToUpload] = React.useState('');
-  const [feedToUploadTo, setFeedToUploadTo] = React.useState("js");
+  const [feedToUploadTo, setFeedToUploadTo] = React.useState(store.selectedFeed);
 
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [createPostResponse, setCreatePostResponse] = React.useState({});
 
   const onToggleSnackBar = () => setSnackbarVisible(!snackbarVisible);
 
   const onDismissSnackBar = () => setSnackbarVisible(false);
   const theme = useTheme();
   const onChangeURL = (query:string) => setUrlToUpload(query);
+
+  const createPost = async () => {
+    setIsLoading(true);
+    const postType = "IMAGE";//getPostType() // make this detect if image link or other site
+    const idDigest = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA512,
+      urlToUpload+feedToUploadTo+store.user?.id +"salt",
+    );
+  
+    let input = {
+      id: idDigest,
+      feedID: feedToUploadTo?.id,
+      content: urlToUpload,
+      postType,
+      userID: store.user? store.user.id : "unknown"
+    }
+    
+    const response = await API.graphql(graphqlOperation(mutations.createPost, {input}))
+    setCreatePostResponse(response)
+    console.log(response)
+    setIsLoading(false)
+    setUrlToUpload("")
+    onToggleSnackBar()
+  }
+
+  // React.useEffect(() => {
+  //   if(params && params.feed){
+  //   setFeedToUploadTo(params.feed)
+  //   }
+  // },[route])
+  // console.log("props" +JSON.stringify(props.route))
+  if(!store.user?.feeds || feedToUploadTo == undefined) {
+    return(
+      <View style={styles.container}>
+        <Text style={styles.title}>Sorry, you don't belong to any feeds</Text>
+        <Divider style={styles.separator} />
+        <Text >Join a feed to upload</Text>
+      </View>
+    )
+  }
+  // console.log("storefeed; " + JSON.stringify(store.selectedFeed?.name))
+  // console.log("feedtoUploadTo " + JSON.stringify(feedToUploadTo.name))
   return (
     <View  style={styles.container}>
       <Text style={styles.title}>Add a new thing to a feed</Text>
@@ -52,12 +105,13 @@ export default function UploadScreen(props: IUploadProps) {
       onValueChange={(itemValue: any, itemIndex:number) => {
         setFeedToUploadTo(itemValue);
       }}
-      selectedValue={feedToUploadTo}
+      selectedValue={feedToUploadTo.id}
       prompt='Feed'
       >
-        <Picker.Item  label="Java" value="java"  />
-        
-        <Picker.Item label="JavaScript" value="js" />
+        { store.user.feeds.items.map((feed: Feed) => {
+          // console.log("feed: " + JSON.stringify(feed))
+          return <Picker.Item key={feed.id} label={feed.name} value={feed.id} />
+        })}
       </Picker>
       {/* </Surface> */}
       
@@ -78,14 +132,18 @@ export default function UploadScreen(props: IUploadProps) {
         
         {/* <View style={styles.seperator}/> */}
         <Divider style={{...styles.separator, width: '70%', marginVertical: 25}}/>
+        {isLoading ? <ActivityIndicator animating={true} /> :
+    
         <Button mode='contained'
         icon='arrow-right'
         style={{ elevation: 2}}
-        onPress={() => onToggleSnackBar()}
+        onPress={() => createPost()}
         >
-          Add to {feedToUploadTo}
+          Add to {feedToUploadTo.name}
         </Button>
-        
+        }
+      {createPostResponse.errors ? <><Divider style={styles.separator}/>
+      <Text>Error: {JSON.stringify(createPostResponse)}</Text></> : <></>}
 
         <Snackbar
         visible={snackbarVisible}
@@ -99,7 +157,7 @@ export default function UploadScreen(props: IUploadProps) {
         //   },
         // }}>
         >
-        Upload button pressed!
+        {createPostResponse.data ? <Text>Uploaded image to feed:  {feedToUploadTo.name}</Text>: <Text>Upload Failed: {JSON.stringify(createPostResponse)}</Text>} 
       </Snackbar>
     </View>
   );

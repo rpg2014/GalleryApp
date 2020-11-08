@@ -4,12 +4,13 @@ import { StyleSheet, StatusBar, Dimensions } from 'react-native';
 import { useSafeAreaInsets, EdgeInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { useIsDrawerOpen } from '@react-navigation/drawer';
+import { Feed } from '../../models';
 
 const NAVBAR_HEIGHT = '7%'
 
 interface IHeaderBarProps {
     navbarHeight?: string | number;
-    title: string,
+    feed?: Feed;
 }
 // const height = Dimensions.get('window').height
 // console.log(NAVBAR_HEIGHT/height)
@@ -24,7 +25,7 @@ const MyComponent = (props: IHeaderBarProps) => {
     const _goBack = () => navigator.dispatch(DrawerActions.openDrawer());
 
     const _handleSearch = () => {
-        navigator.navigate("Upload")
+        navigator.navigate("Upload", {feed: props.feed})
         // console.log("pressed upload")
     };
     
@@ -40,7 +41,7 @@ const MyComponent = (props: IHeaderBarProps) => {
             <StatusBar backgroundColor={theme.colors.surface} barStyle={theme.dark ? "light-content" : "dark-content"} hidden={false} showHideTransition='slide' translucent={true} />
             <Appbar style={{ ...styles.bottom, }} >
                 <Appbar.Action icon={isDrawerOpen ? 'arrow-collapse-left' : 'menu'} onPress={_goBack} />
-                <Appbar.Content title={props.title} subtitle="Subtitle" />
+                <Appbar.Content title={props.feed?.name? props.feed.name : "Default"} subtitle="Subtitle" />
                 <Appbar.Action icon="upload" onPress={_handleSearch} />
 
                 <Menu

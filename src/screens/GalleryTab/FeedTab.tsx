@@ -12,6 +12,12 @@ import ColumnItem ,{  IColumnItemProps } from './ColumnItem'
 import { Content, IContentProps } from './Content';
 import { useCollapsibleStack, createCollapsibleStack } from 'react-navigation-collapsible'
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+
+
+import { feedsByUser, getFeed } from '../../../graphql/queries';
+import { API, graphqlOperation } from 'aws-amplify';
+import { Feed } from '../../../models';
+import { useActions, useStore } from '../../common/store';
 // import "../../any.jpg"
 
 // "https://some-random-api.ml/img/red_panda",
@@ -32,8 +38,9 @@ const tileSize = screenWidthWithPadding / numColumns;
 const heightModifier = 1.5;
 
 export interface IFeedProps {
-  feedName: string
-  feedId: string;
+  // feedName: string
+  // feedId: string;
+  feed: Feed;
   [key:string]: any
 }
 
@@ -41,12 +48,18 @@ export default function FeedTab(props: IFeedProps) {
   const theme = useTheme();
   const isFocused = useIsFocused();
   const navigator = useNavigation()
+  const store = useStore();
+  const actions = useActions();
   const isDrawerOpen = useIsDrawerOpen();
-  // React.useLayoutEffect(() => {
-  //   navigator.setOptions({
-      
-  //   });
-  // }, [navigator]);
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    console.log("selectedFeed: "+ JSON.stringify(store.selectedFeed?.name))
+    console.log("propsFeed: " +JSON.stringify(props.feed.name ))
+    if(!store.selectedFeed || store.selectedFeed.id !== props.feed.id){
+      // store.dispatch(actions.setSelectedFeed(props.feed))
+    }
+  },[props.feed.name, store.selectedFeed?.name])
 
   const [images, setImages] = React.useState(picsumImages);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -63,12 +76,12 @@ export default function FeedTab(props: IFeedProps) {
   
   const renderItem = ({item, index}) => {
     
-    console.log(JSON.stringify(item))
+    // console.log(JSON.stringify(item))
     return( 
       <ColumnItem  {...item} id={item.id}navigation={props.navigation}  index={index} />
     )
   }
-
+  // console.log("fab props: "+ JSON.stringify(props.feed.name))
   return (
     <View style={{...styles.container, backgroundColor: theme.colors.backdrop}}>
       {/* <HeaderBar/> */}
@@ -103,7 +116,10 @@ export default function FeedTab(props: IFeedProps) {
     <FAB
       icon="upload"
       visible={isFocused && !isDrawerOpen}
-      onPress={() => navigator.navigate("Upload", {feed: props.feedId})}
+      onPress={() => {
+        store.dispatch(actions.setSelectedFeed(props.feed))
+        navigator.navigate("Upload", {feed: props.feed.name})
+      }}
       style={{
         elevation:5,
         position: 'absolute',
@@ -123,8 +139,13 @@ export type FeedParamList = {
   Feed: IFeedProps;
   Content: IContentProps
 };
-let FeedStack = createSharedElementStackNavigator<FeedParamList>({debug: true, name: 'feedtab'});
-export function FeedTabNavigator(props: {name: string, component?: any}) {
+let FeedStack = createSharedElementStackNavigator<FeedParamList>({debug: false, name: 'feedtab'});
+
+
+export interface IFeedNavigatorProps {
+  feed: Feed;
+}
+export function FeedTabNavigator(props: IFeedNavigatorProps) {
   
 
   
@@ -140,9 +161,9 @@ export function FeedTabNavigator(props: {name: string, component?: any}) {
       {/* {createCollapsibleStack( */}
       <FeedStack.Screen
         name={'Feed'}
-        component={FeedTab}
+        component={() => <FeedTab feed={props.feed}/>}
         options={{ headerShown: true,
-        header: () => <HeaderBar title={props.name}/>,
+        header: () => <HeaderBar feed={props.feed}/>,
         headerStyle: styles.feedTab
       }}
       />
@@ -156,8 +177,8 @@ export function FeedTabNavigator(props: {name: string, component?: any}) {
         component={Content}
         // children={(props: IContentProps) => <Content {...props} />}
         sharedElements={(route, otherRoute, showing) => {
-          console.log("route: " + JSON.stringify(route))
-          console.log("otherroute: " + JSON.stringify(otherRoute))
+          // console.log("route: " + JSON.stringify(route))
+          // console.log("otherroute: " + JSON.stringify(otherRoute))
           const item  = route.params;
           return [item.id/*`${item.id}.photo`*/];
         }}

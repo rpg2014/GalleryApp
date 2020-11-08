@@ -28,7 +28,7 @@
       "package": "com.parkergiven.galleryApp"
     },
     "androidStatusBar": {
-      "barStyle": "dark-content",
+      "barStyle": "dark-content"
       
     },
     "androidNavigationBar": {

@@ -52,7 +52,7 @@ const ColumnItem = (props:IColumnItemProps) => {
         
       }
       setIsLoading(false)
-      setImageUrl(require("../../any.jpg"))
+      setImageUrl(require("../../../any.jpg"))
     }
     const _onPress = () => {
         
@@ -83,7 +83,7 @@ const ColumnItem = (props:IColumnItemProps) => {
         <Text>{error}</Text>
       </View>
     }
-  console.log("rendering columnItem: "+ props.id)
+  // console.log("rendering columnItem: "+ props.id)
   return (
     <View style={{borderRadius:0,elevation:0, backgroundColor:theme.colors.backdrop}}>
       <TouchableRipple
@@ -98,7 +98,7 @@ const ColumnItem = (props:IColumnItemProps) => {
           
            <Animated.View style={{...gridItemStyle, elevation: elevation}}>
            <SharedElement id={props.id/*`${props.id as string}.photo`*/}> 
-        <Image source={ require("../../any.jpg") } style={{...styles.image, borderRadius: theme.roundness}}/>
+        <Image source={ require("../../../any.jpg") } style={{...styles.image, borderRadius: theme.roundness}}/>
         </SharedElement>
         </Animated.View>
         

@@ -8,7 +8,7 @@ import { Text, View } from './Themed';
 
 export default function EditScreenInfo({ path }: { path: string }) {
   return (
-    <View>
+    <View style={styles.contentContainer}>
       <View style={styles.getStartedContainer}>
         <Text
           style={styles.getStartedText}
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 500,
   },
   welcomeContainer: {
     alignItems: 'center',
