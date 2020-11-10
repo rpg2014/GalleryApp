@@ -2,7 +2,7 @@ projects:
   galleryapp:
     schemaPath: amplify/backend/api/galleryapp/build/schema.graphql
     includes:
-      - src/graphql/**/*.ts
+      - graphql/**/*.ts
     excludes:
       - ./amplify/**
     extensions:

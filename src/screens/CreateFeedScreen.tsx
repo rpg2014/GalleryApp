@@ -5,7 +5,9 @@ import { API, graphqlOperation } from "aws-amplify";
 import { Text, TextInput, Searchbar, useTheme, Button, Surface, Divider, Snackbar } from 'react-native-paper';
 import * as mutations from '../../graphql/mutations';
 import { useState } from 'react';
+import { GraphQLResult } from "@aws-amplify/api";
 import * as Crypto from 'expo-crypto';
+import {CreateFeedInput, CreateFeedMutation, CreateFeedMutationVariables} from '../API'
 import HeaderBar from './HeaderBar'
 
 
@@ -24,8 +26,13 @@ export const CreateFeed = () => {
             feedName+store.user?.id+"salty",
             {encoding: Crypto.CryptoEncoding.HEX}
         );
-        const response = await API.graphql(graphqlOperation(mutations.createFeed, {input: {name: feedName, id: digest, userID: store.user ? store.user.id : "unsigned in user"}}))
-        store.dispatch({type:"MERGE_STATE", data:{user: response.data.createFeed.user}})
+        let input : CreateFeedMutationVariables= {input:{
+            name: feedName,
+            id: digest,
+            userID: store.user ? store.user.id : "unsigned in user"
+        }}
+        const response  = await API.graphql(graphqlOperation(mutations.createFeed, input)) as GraphQLResult<CreateFeedMutation>
+        store.dispatch({type:"MERGE_STATE", data:{user: response.data?.createFeed?.user}})
         onToggleSnackBar()
     }
     store.user?.id
