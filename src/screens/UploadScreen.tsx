@@ -11,6 +11,8 @@ import { useRoute } from '@react-navigation/native';
 import { useStore } from '../common/store';
 import { API, graphqlOperation } from 'aws-amplify';
 import * as mutations from '../../graphql/mutations';
+import { CreatePostInput, CreatePostMutation, CreatePostMutationVariables, PostType } from '../API';
+import { GraphQLResult } from "@aws-amplify/api";
 
 // import { Icon } from 'react-native-paper/lib/typescript/src/components/List/List';
 
@@ -40,21 +42,24 @@ export default function UploadScreen(props: IUploadProps) {
 
   const createPost = async () => {
     setIsLoading(true);
-    const postType = "IMAGE";//getPostType() // make this detect if image link or other site
+    const postType = PostType.IMAGE;//getPostType() // make this detect if image link or other site
     const idDigest = await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA512,
       urlToUpload+feedToUploadTo+store.user?.id +"salt",
     );
   
-    let input = {
+    let input: CreatePostInput = {
       id: idDigest,
-      feedID: feedToUploadTo?.id,
+      feedID: feedToUploadTo? feedToUploadTo.id : "",
       content: urlToUpload,
       postType,
       userID: store.user? store.user.id : "unknown"
     }
-    
-    const response = await API.graphql(graphqlOperation(mutations.createPost, {input}))
+    let createPostMV: CreatePostMutationVariables = {
+      input
+    }
+    console.log(createPostMV)
+    const response = await API.graphql(graphqlOperation(mutations.createPost, createPostMV))as GraphQLResult<CreatePostMutation>
     setCreatePostResponse(response)
     console.log(response)
     setIsLoading(false)
@@ -108,7 +113,7 @@ export default function UploadScreen(props: IUploadProps) {
       selectedValue={feedToUploadTo.id}
       prompt='Feed'
       >
-        { store.user.feeds.items.map((feed: Feed) => {
+        { store.user.feeds.map((feed: Feed) => {
           // console.log("feed: " + JSON.stringify(feed))
           return <Picker.Item key={feed.id} label={feed.name} value={feed.id} />
         })}

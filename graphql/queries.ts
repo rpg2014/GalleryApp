@@ -12,16 +12,6 @@ export const getUser = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
@@ -52,13 +42,6 @@ export const listUsers = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -79,13 +62,6 @@ export const getFeed = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -99,24 +75,7 @@ export const getFeed = /* GraphQL */ `
           content
           postType
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
           feedID
-          feed {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
-          comments {
-            nextToken
-          }
           createdAt
           updatedAt
           version
@@ -142,25 +101,11 @@ export const listFeeds = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -182,13 +127,6 @@ export const getPost = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -203,25 +141,11 @@ export const getPost = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -232,24 +156,6 @@ export const getPost = /* GraphQL */ `
           id
           postID
           userId
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          post {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           content
           createdAt
           updatedAt
@@ -278,9 +184,6 @@ export const listPosts = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -290,28 +193,10 @@ export const listPosts = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt
@@ -332,13 +217,6 @@ export const getComment = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -354,9 +232,6 @@ export const getComment = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -366,28 +241,10 @@ export const getComment = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt
@@ -414,9 +271,6 @@ export const listComments = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -427,24 +281,7 @@ export const listComments = /* GraphQL */ `
           content
           postType
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
           feedID
-          feed {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
-          comments {
-            nextToken
-          }
           createdAt
           updatedAt
           version
@@ -479,25 +316,11 @@ export const feedsByUser = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -531,9 +354,6 @@ export const postsByFeed = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -543,28 +363,10 @@ export const postsByFeed = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt
@@ -599,9 +401,6 @@ export const postsByUser = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -611,28 +410,10 @@ export const postsByUser = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt

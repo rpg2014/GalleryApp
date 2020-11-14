@@ -10,6 +10,8 @@ const NAVBAR_HEIGHT = '7%'
 
 interface IHeaderBarProps {
     navbarHeight?: string | number;
+    title: string;
+    subTitle?: string;
     feed?: Feed;
 }
 // const height = Dimensions.get('window').height
@@ -41,8 +43,8 @@ const MyComponent = (props: IHeaderBarProps) => {
             <StatusBar backgroundColor={theme.colors.surface} barStyle={theme.dark ? "light-content" : "dark-content"} hidden={false} showHideTransition='slide' translucent={true} />
             <Appbar style={{ ...styles.bottom, }} >
                 <Appbar.Action icon={isDrawerOpen ? 'arrow-collapse-left' : 'menu'} onPress={_goBack} />
-                <Appbar.Content title={props.feed?.name? props.feed.name : "Default"} subtitle="Subtitle" />
-                <Appbar.Action icon="upload" onPress={_handleSearch} />
+                <Appbar.Content title={props.title} subtitle={props.subTitle} />
+                {/* <Appbar.Action icon="upload" onPress={_handleSearch} /> */}
 
                 <Menu
                     // style={{backgroundColor: theme.colors.accent}}

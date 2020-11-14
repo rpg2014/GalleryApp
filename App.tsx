@@ -48,13 +48,13 @@ export default function App() {
   // };
 
 
-  if (!isLoadingComplete) {
+  if (!isLoadingComplete || !initalState) {
     return null;
   } else {
     return (
       
       <SafeAreaProvider>
-        <StoreProvider>
+        <StoreProvider initalState={initalState}>
         <PaperProvider theme={defaultTheme}>
           <Navigation  theme={defaultTheme} />
           <StatusBar />

@@ -11,6 +11,7 @@ import { useTheme, Appbar} from 'react-native-paper';
 import UploadScreen from '../screens/UploadScreen';
 import { Ionicons } from '@expo/vector-icons';
 import Animated from 'react-native-reanimated';
+import { CreateFeed } from '../screens/CreateFeedScreen';
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -45,6 +46,12 @@ function RootNavigator() {
         //   tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
         }}
       />
+      <Stack.Screen
+        name="CreateFeed"
+        component={CreateFeed}
+        options={{
+          ...TransitionPresets.ModalTransition
+        }}/>
       {/* <Stack.Screen
         name="Settings"
         component={()=> { }}

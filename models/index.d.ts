@@ -1,14 +1,17 @@
 import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
 
-
+export enum PostType {
+  IMAGE = "IMAGE",
+  WEBSITE = "WEBSITE"
+}
 
 
 
 export declare class User {
   readonly id: string;
   readonly name?: string;
-  readonly feeds: Feed[];
-  readonly feedIDs: string[];
+  readonly feeds?: Feed[];
+  readonly feedIDs?: string[];
   constructor(init: ModelInit<User>);
   static copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
 }
@@ -16,18 +19,19 @@ export declare class User {
 export declare class Feed {
   readonly id: string;
   readonly name: string;
-  readonly user?: User;
-  readonly posts: Post[];
+  readonly user: User;
+  readonly posts?: Post[];
   constructor(init: ModelInit<Feed>);
   static copyOf(source: Feed, mutator: (draft: MutableModel<Feed>) => MutableModel<Feed> | void): Feed;
 }
 
 export declare class Post {
   readonly id: string;
-  readonly title: string;
+  readonly title?: string;
   readonly content: string;
+  readonly postType?: PostType | keyof typeof PostType;
   readonly user?: User;
-  readonly feed?: Feed;
+  readonly feed: Feed;
   readonly comments?: (Comment | null)[];
   constructor(init: ModelInit<Post>);
   static copyOf(source: Post, mutator: (draft: MutableModel<Post>) => MutableModel<Post> | void): Post;

@@ -32,31 +32,33 @@ export default function GalleryNavigator() {
   const screenWidth = Dimensions.get("window").width
   const isLargeScreen = screenWidth >= 768;
   const theme = useTheme()
-  const tabs: Feed[] | undefined = useStore().user?.feeds.items;
+  const tabs: Feed[] | undefined = useStore().user.feeds;
   const isFocused = useIsFocused();
   const navigator = useNavigation()
   
   return (
-  
+
     <Gallery.Navigator
-      initialRouteName={tabs && tabs[0] ? tabs[0].id: ""}
+      initialRouteName={tabs && tabs[0] ? tabs[0].id : ""}
       drawerType={isLargeScreen ? 'slide' : 'back'}
-      drawerStyle={isLargeScreen ? null : { width: '66%'}}
-      edgeWidth={screenWidth  }
-      >
-        {/** Put feed subscription screen here */}
-        <Gallery.Screen 
-        key="home" 
-        name="Home"
-        
-        >{() => <CreateFeed /> }</Gallery.Screen>
-        
-        {tabs &&  tabs.length !==0 ? tabs.map(tab => {
-          
-          return GalleryScreen(tab, FeedTabNavigator )
-          }) : <></>}
+      drawerStyle={isLargeScreen ? null : { width: '66%' }}
+      edgeWidth={screenWidth}
+    >
+      {/** Put feed subscription screen here */}
+
+
+      {tabs && tabs.length !== 0 ? tabs.map(tab => {
+
+        return GalleryScreen(tab, FeedTabNavigator)
+      }) :
+        <Gallery.Screen
+          key="home"
+          name="Home">
+            {() => <CreateFeed />}
+        </Gallery.Screen>
+      }
     </Gallery.Navigator>
-    
+
   );
 }
 

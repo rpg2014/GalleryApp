@@ -15,16 +15,6 @@ export const createUser = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
@@ -49,16 +39,6 @@ export const updateUser = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
@@ -83,16 +63,6 @@ export const deleteUser = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
@@ -117,13 +87,6 @@ export const createFeed = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -137,24 +100,7 @@ export const createFeed = /* GraphQL */ `
           content
           postType
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
           feedID
-          feed {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
-          comments {
-            nextToken
-          }
           createdAt
           updatedAt
           version
@@ -179,13 +125,6 @@ export const updateFeed = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -199,24 +138,7 @@ export const updateFeed = /* GraphQL */ `
           content
           postType
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
           feedID
-          feed {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
-          comments {
-            nextToken
-          }
           createdAt
           updatedAt
           version
@@ -241,13 +163,6 @@ export const deleteFeed = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -261,24 +176,7 @@ export const deleteFeed = /* GraphQL */ `
           content
           postType
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
           feedID
-          feed {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
-          comments {
-            nextToken
-          }
           createdAt
           updatedAt
           version
@@ -305,13 +203,6 @@ export const createPost = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -326,25 +217,11 @@ export const createPost = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -355,24 +232,6 @@ export const createPost = /* GraphQL */ `
           id
           postID
           userId
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          post {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           content
           createdAt
           updatedAt
@@ -400,13 +259,6 @@ export const updatePost = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -421,25 +273,11 @@ export const updatePost = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -450,24 +288,6 @@ export const updatePost = /* GraphQL */ `
           id
           postID
           userId
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          post {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           content
           createdAt
           updatedAt
@@ -495,13 +315,6 @@ export const deletePost = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -516,25 +329,11 @@ export const deletePost = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
         }
         posts {
-          items {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           nextToken
         }
         createdAt
@@ -545,24 +344,6 @@ export const deletePost = /* GraphQL */ `
           id
           postID
           userId
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          post {
-            id
-            title
-            content
-            postType
-            userID
-            feedID
-            createdAt
-            updatedAt
-            version
-          }
           content
           createdAt
           updatedAt
@@ -588,13 +369,6 @@ export const createComment = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -610,9 +384,6 @@ export const createComment = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -622,28 +393,10 @@ export const createComment = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt
@@ -669,13 +422,6 @@ export const updateComment = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -691,9 +437,6 @@ export const updateComment = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -703,28 +446,10 @@ export const updateComment = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt
@@ -750,13 +475,6 @@ export const deleteComment = /* GraphQL */ `
         id
         name
         feeds {
-          items {
-            id
-            name
-            userID
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         feedIDs
@@ -772,9 +490,6 @@ export const deleteComment = /* GraphQL */ `
         user {
           id
           name
-          feeds {
-            nextToken
-          }
           feedIDs
           createdAt
           updatedAt
@@ -784,28 +499,10 @@ export const deleteComment = /* GraphQL */ `
           id
           name
           userID
-          user {
-            id
-            name
-            feedIDs
-            createdAt
-            updatedAt
-          }
-          posts {
-            nextToken
-          }
           createdAt
           updatedAt
         }
         comments {
-          items {
-            id
-            postID
-            userId
-            content
-            createdAt
-            updatedAt
-          }
           nextToken
         }
         createdAt

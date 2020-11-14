@@ -15,7 +15,7 @@ type Feed @model
   id: ID!
   name: String!
   userID: ID!
-  user: User @connection(fields: ["userID"])
+  user: User! @connection(fields: ["userID"])
   posts: [Post!] @connection(keyName: "byFeed", fields: ["id"])
 }
 
@@ -30,7 +30,7 @@ type Post @model @versioned
   userID: ID!
   user: User @connection(fields: ["userID"])
   feedID: ID!
-  feed: Feed @connection(fields: ["feedID"])
+  feed: Feed! @connection(fields: ["feedID"])
   comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
 }
 

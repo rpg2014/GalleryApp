@@ -25,7 +25,7 @@ export const schema = {
                     },
                     "isRequired": true,
                     "attributes": [],
-                    "isArrayNullable": false,
+                    "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "user"
@@ -37,7 +37,7 @@ export const schema = {
                     "type": "String",
                     "isRequired": true,
                     "attributes": [],
-                    "isArrayNullable": false
+                    "isArrayNullable": true
                 }
             },
             "syncable": true,
@@ -80,7 +80,7 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -95,7 +95,7 @@ export const schema = {
                     },
                     "isRequired": true,
                     "attributes": [],
-                    "isArrayNullable": false,
+                    "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "feed"
@@ -135,7 +135,7 @@ export const schema = {
                     "name": "title",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
                 },
                 "content": {
@@ -143,6 +143,15 @@ export const schema = {
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "postType": {
+                    "name": "postType",
+                    "isArray": false,
+                    "type": {
+                        "enum": "PostType"
+                    },
+                    "isRequired": false,
                     "attributes": []
                 },
                 "user": {
@@ -164,7 +173,7 @@ export const schema = {
                     "type": {
                         "model": "Feed"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -292,7 +301,15 @@ export const schema = {
             ]
         }
     },
-    "enums": {},
+    "enums": {
+        "PostType": {
+            "name": "PostType",
+            "values": [
+                "IMAGE",
+                "WEBSITE"
+            ]
+        }
+    },
     "nonModels": {},
-    "version": "34e5c7399461f0fce4274f810148802f"
+    "version": "d22d48dc29aae7de0290b82d4c6b84ae"
 };

@@ -1,12 +1,21 @@
-import React, { createContext, useContext, useReducer, useEffect, Context } from 'react';
-import { Feed, User } from '../../models';
+import React, { createContext, useContext, useReducer, useEffect, Context, ReducerWithoutAction, ReactNode } from 'react';
+import { Feed, Post, User } from '../../models';
 import AsyncStorage from '@react-native-community/async-storage';
 import { API, Auth, graphqlOperation } from 'aws-amplify';
 import {CognitoUser} from "amazon-cognito-identity-js"
 import { getUser } from '../../graphql/queries';
+import { useFocusEffect } from '@react-navigation/native';
+import { CreateUserMutation, CreateUserMutationVariables, GetFeedQuery, GetUserQuery, GetUserQueryVariables } from '../API';
+import uuid from "react-native-uuid"
+import { GraphQLResult } from "@aws-amplify/api";
+import { ActivityIndicator } from 'react-native-paper';
+import { createUser } from '../../graphql/mutations';
+import {Map }from 'immutable'
+import { convertUserQueryToUser } from './common';
 
 export interface IAppState {
-    user?: User
+    user: User
+    postsByFeed: Map<string, Post[] | null>
     authData?: CognitoUser 
     selectedFeed?: Feed
     //auth state from cognito
@@ -19,10 +28,18 @@ export interface IAppDispatch {
     dispatch: (action: any) => void
 }
 export interface IAppActions {
-    setSelectedFeed: (feed: Feed) => IAction<Feed>
+    setSelectedFeedAction: (feed: Feed) => IAction<Feed>
+    setPostsByFeed: (posts: Map<string, Post[] | null>) => IAction<Map<string, Post[] | null>>,
+    saveState: (state: IAppState) => void
 }
-const initialStateGlobal: IAppState & IAppDispatch = { 
-    user: undefined,
+const initalUserGlobal: User = {
+    id: "1",//uuid.v1(),
+    feeds: [],
+    feedIDs: []
+}
+export const initialStateGlobal: IAppState & IAppDispatch = { 
+    user: initalUserGlobal,
+    postsByFeed: Map(),
     authData: undefined,
     selectedFeed: undefined,
     dispatch: (action: {type: string, data: any}) => {}
@@ -30,8 +47,8 @@ const initialStateGlobal: IAppState & IAppDispatch = {
 
 
 //TODO change action: any to a enum or something
-const reducer = (state: IAppState, action: any) => {
-    console.log(action)
+const reducer = (state: IAppState, action: IAction<any>): IAppState => {
+    // console.log(action)
     switch (action.type) {
         case "SET_STATE": 
             return{
@@ -41,6 +58,16 @@ const reducer = (state: IAppState, action: any) => {
             return {
                 ...state,
                 ...action.data
+            }
+        case "SET_USER": 
+            return {
+                ...state,
+                user: action.data,
+            }
+        case "SET_POSTS_BY_FEED" :
+            return {
+                ...state,
+                postsByFeed: action.data
             }
         case "SET_SELECTED_FEED":
             return {
@@ -56,79 +83,89 @@ const reducer = (state: IAppState, action: any) => {
 }
 const StoreContext = React.createContext<IAppState& IAppDispatch>(initialStateGlobal);
 
-export const StoreProvider = (props:any) => {
+
+interface IStoreProvider {
+    initalState: IAppState,
+    children: ReactNode
+}
+
+//Fetches user profile 
+export const StoreProvider = (props: IStoreProvider) => {
     
-    const [state, dispatch] = useReducer(reducer, initialStateGlobal);
+    const [state, dispatch] = useReducer(reducer, props.initalState);
+    const [errors, setErrors] = React.useState<String[]>()
     
-    const [initialState, setInitialState] = React.useState<IAppState>();
-    const [isLocalLoadingComplete, setIsLocalLoadingComplete] = React.useState(false);
+    
     const [isLoadingComplete, setIsLoadingComplete] = React.useState(false);
 
+    //Then fetch User profile from graphql and save it to state.  
+    // if is newly created I need to create a user in db, 
     React.useEffect(() => {
-        async function loadInitialStateFromStorage() {
-            //Load inital user state
-            if (!initialState) {
-                const state = await AsyncStorage.getItem('user_info')
-                const parsedState = state !== null ? JSON.parse(state) : initialStateGlobal;
-                dispatch({
-                    type: "SET_STATE",
-                    data: parsedState
-                })
-                setIsLocalLoadingComplete(true)
-            }
-        }
-        loadInitialStateFromStorage();
-        
-    }, [initialState]);
+        var response: GraphQLResult<GetUserQuery>
 
-
-    // In this useEffect, wait till done loading from storage, then check to see if user exsists and has feeds, if not, auth, then pull feeds by user.  
-    React.useEffect(() => {
-        async function loadAuthedUserFromCognito() {
-            if(isLocalLoadingComplete && !state.user){
-                Auth.currentAuthenticatedUser().then(user => dispatch({
-                    type: "MERGE_STATE",
-                    data: {
-                        authData: user
+        const fetchUserAndSetState = async () => {
+            try {
+                console.log("state: " + JSON.stringify(state as IAppState) )
+                console.log("initalGlobal user: " + initalUserGlobal.id)
+                // if((state as IAppState).user.id === initalUserGlobal.id) {
+                //     console.log("Creating user")
+                //     const mutationMV: CreateUserMutationVariables = {input: {
+                //         id: initalUserGlobal.id
+                //     }}
+                //     const response = await API.graphql(graphqlOperation(createUser, mutationMV)) as GraphQLResult<CreateUserMutation>
+                //     if(response.errors){
+                //         console.log("Errors while creating user: " + JSON.stringify(response.errors))
+                //     }
+                //     if(response.data && response.data.createUser) {
+                //         console.log("User created")
+                //         const saveState = async () => {
+                //             if(response.data && response.data.createUser) {
+                //                 const user = convertUserQueryToUser(response.data.createUser)
+                //                 AsyncStorage.setItem("user_info", JSON.stringify(user))
+                //                     .then(_ => console.log("[CACHE] Saved State"))
+                //                     .catch(error  => console.log("[ERROR] Error saving state: " + JSON.stringify(error)))
+                //             }
+                //         }
+                        
+                //         saveState();
+                //     }
+                // } else {
+                    console.log("refreshing user data")
+                    // refresh user data from db
+                    const qMV: GetUserQueryVariables = { id: (state as IAppState).user.id }
+                    
+                    response = await API.graphql(graphqlOperation(getUser, qMV)) as GraphQLResult<GetUserQuery>//state.authData.getSignInUserSession().getSessionId}) )
+                    if (response.errors) {
+                        setErrors(response.errors)
+                        console.log(response)
                     }
-                }))
+                    if (response.data && response.data.getUser) {
+                        console.log("Fetched user data for user id " + response.data.getUser.id)
+                        dispatch({
+                            type: "SET_USER",
+                            data: convertUserQueryToUser(response.data.getUser)
+                        })
+                        setIsLoadingComplete(true);
+                    // }  
+                }
+            } catch (e) {
+                console.log(e)
             }
-            
         }
-        
-    })
+        if(!isLoadingComplete)
+        fetchUserAndSetState();
+    }, []);
 
-    //Then fetch User profile from graphql
     React.useEffect(() => {
-        var data: any = {}
-    
-    const fetchPosts = async () => {
-      try {
-        data  = await API.graphql(graphqlOperation(getUser, {id: "1"}))//state.authData.getSignInUserSession().getSessionId}) )
-        if(data){
-            setIsLoadingComplete(false);
+        
+        if(state.user && state.user.id) {
+            
+            AsyncStorage.setItem("user_info", JSON.stringify(state))
+            .then(_ => console.log("[CACHE] Saved State"))
+            .catch(error  => console.log("[ERROR] Error saving state: " + JSON.stringify(error)))
         }
+    }, [state.user?.id, state.user?.feeds?.length])
 
-      } catch (e) {
-        console.log(e)
-      }
-      console.log("data")
-      console.log(data)
-      if(data && !isLoadingComplete){
-        console.log("feedbyuser")
-        console.log(data.data)
-        let items: Feed[] = data.data.getUser.feeds.items
-        console.log(items[0].id)
-        dispatch({
-            type: "MERGE_STATE",
-            data: {
-                user: data.data.getUser
-            }
-        })
-      }
-    }
-    fetchPosts();
-    },[state.authData]);
     
     return (
         <StoreContext.Provider value={{...state, dispatch}}>
@@ -151,8 +188,22 @@ export const useActions = (): IAppActions & IAppDispatch => {
             data: feed,
         }
     }
+    const setPostsByFeed = (posts: Map<string,Post[]>) => {
+        return{
+             type: "SET_POSTS_BY_FEED",
+             data: posts,
+         }
+     }
+
+    const saveState = async (store: IAppState) => {
+        AsyncStorage.setItem("user_info", JSON.stringify(store))
+        .then(_ => console.log("[CACHE] Saved State"))
+        .catch(error  => console.log("[ERROR] Error saving state: " + JSON.stringify(error)))
+    }
     return {
-        setSelectedFeed,
+        saveState, 
+        setPostsByFeed,
+        setSelectedFeedAction: setSelectedFeed,
         dispatch: state.dispatch
     }
 }
